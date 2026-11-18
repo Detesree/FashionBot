@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #ffffff;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+}
+
+
+/* MENÚ FIJO EN LA PARTE SUPERIOR */
+.fashion-navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1050;
+  background-color: #ffffff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Evita que los apartados queden ocultos debajo del menú */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+section,
+header {
+  scroll-margin-top: 90px;
+}
