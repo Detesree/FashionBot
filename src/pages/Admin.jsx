@@ -14,13 +14,28 @@ function Admin() {
     const [activeTab, setActiveTab] = useState("consultas");
 
     const loadData = () => {
-        setConsultations(getConsultations());
-        setOrders(getOrders());
-        setAppointments(getAppointments());
+        // Aseguramos que si hay un error, siempre sea un array vacío y no rompa los contadores
+        setConsultations(getConsultations() || []);
+        setOrders(getOrders() || []);
+        setAppointments(getAppointments() || []);
     };
 
     useEffect(() => {
         loadData();
+
+        // 🚨 NUEVO: Escucha si los datos cambian en otra pestaña del mismo navegador
+        const handleStorageChange = (e) => {
+            if (e.key && (
+                e.key.includes('consultation') ||
+                e.key.includes('order') ||
+                e.key.includes('appointment')
+            )) {
+                loadData();
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     const formatDate = (date) => {
@@ -37,7 +52,6 @@ function Admin() {
         }).format(price);
     };
 
-    // ⚠️ ESTA FUNCIÓN SE HABÍA BORRADO, AQUÍ ESTÁ DE NUEVO
     const handleConfirmOrder = (reference) => {
         if (window.confirm(`¿Estás seguro de confirmar el pedido ${reference}?`)) {
             updateOrderStatus(reference, "Confirmado");
@@ -48,7 +62,8 @@ function Admin() {
     const handleClearData = () => {
         if (window.confirm("⚠️ ¿Estás seguro de que deseas borrar TODAS las consultas, pedidos y citas? Esta acción no se puede deshacer.")) {
             clearAllData();
-            // El loadData se llamará automáticamente gracias a la función notifyChange en storage.js
+            // loadData() se llama automáticamente si tienes notifyChange en tu storage.js
+            loadData();
         }
     };
 
@@ -61,7 +76,6 @@ function Admin() {
                     <p className="text-muted">Gestión de FashionBot</p>
                 </div>
 
-                {/* PASO 3: AQUÍ ESTÁN LOS BOTONES JUNTOS */}
                 <div className="d-flex gap-2">
                     <button className="btn btn-outline-danger" onClick={handleClearData}>
                         <i className="bi bi-trash me-2"></i> Borrar Todo
@@ -147,7 +161,7 @@ function Admin() {
                                                 <td className="text-nowrap">{formatDate(c.date)}</td>
                                                 <td>{c.message}</td>
                                                 <td><span className="badge bg-primary">{c.category}</span></td>
-                                                <td className="text-muted small">{c.answer}</td>
+                                                <td className="text-muted small" style={{ whiteSpace: "pre-wrap" }}>{c.answer}</td>
                                             </tr>
                                         ))}
                                     </tbody>
