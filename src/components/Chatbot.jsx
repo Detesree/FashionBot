@@ -416,14 +416,24 @@ function Chatbot() {
         addMessage("bot", "Lamentamos cualquier inconveniente. 😔 Vamos a registrar tu queja o reclamo para que nuestro equipo lo revise.");
     };
 
-    // GUARDAR QUEJA O RECLAMO
+    // GUARDAR QUEJA O RECLAMO (Texto formateado)
     const finishComplaint = () => {
+        // Creamos un texto bonito con los datos
+        const formattedAnswer = `¡Queja registrada correctamente! ✅\n\nCliente: ${formData.customer}\nTeléfono: ${formData.phone}\nRef. Pedido: ${formData.orderReference}\nTipo: ${formData.complaintType}\nDescripción: ${formData.description}\n\nNuestro equipo revisará el caso.`;
+
         try {
-            saveConsultation({ message: formData.description, category: "Queja o reclamo", answer: JSON.stringify(formData) });
+            // Guardamos el texto limpio en lugar del JSON
+            saveConsultation({
+                message: formData.description,
+                category: "Queja o reclamo",
+                answer: formattedAnswer
+            });
         } catch (error) {
             console.error("No se pudo guardar la queja:", error);
         }
-        addMessage("bot", `¡Tu queja o reclamo fue registrada correctamente! ✅\n\nCliente: ${formData.customer}\nTeléfono: ${formData.phone}\nReferencia del pedido: ${formData.orderReference}\nTipo: ${formData.complaintType}\nDescripción: ${formData.description}\n\nNuestro equipo revisará tu caso y se pondrá en contacto contigo.`);
+
+        // Mostramos el mensaje en el chat
+        addMessage("bot", formattedAnswer);
         setFlow(""); setStep(0); setFormData({}); setInput(""); setShowOptions(true);
     };
 
